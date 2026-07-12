@@ -44,5 +44,8 @@ jobs:
       - name: Validate ML integration
         run: python scripts/validate_ml_integration.py
 
-      - name: Run unit tests
+      - name: Run ML end-to-end demo
+        run: python scripts/run_ml_end_to_end_demo.py
+
+      - name: Run tests
         run: pytest
