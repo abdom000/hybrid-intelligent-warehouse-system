@@ -1,0 +1,97 @@
+{
+  "demo_status": "passed",
+  "mode": "ml_pipeline_to_expert_system_facts",
+  "limitations": [
+    "No shelf images are available, so shelf recognition uses the unknown/manual-review fallback.",
+    "The expert-system rule engine is not executed in this demo."
+  ],
+  "order": {
+    "order_id": "O101",
+    "product_id": "P1",
+    "shelf_id": "S1",
+    "quantity": 2,
+    "total_weight_kg": 20.0,
+    "priority": "urgent",
+    "status": "pending",
+    "created_at": "2026-07-01T13:50:00Z",
+    "deadline": "2026-07-01T14:30:00Z"
+  },
+  "forecast": {
+    "forecast_time": "2026-07-01T00:00:00Z",
+    "forecast_horizon_minutes": 60,
+    "expected_orders": 24,
+    "load_level": "low",
+    "model_version": "demo-random-forest-1.0",
+    "generated_at": "2026-07-12T04:00:43.436914Z"
+  },
+  "shelf_prediction": {
+    "shelf_id": "S1",
+    "status": "unknown",
+    "confidence": 0.0,
+    "model_version": "demo-no-image-1.0",
+    "prediction_time": "2026-07-12T04:00:43.437001Z",
+    "requires_manual_review": true
+  },
+  "expert_system_facts": {
+    "order": {
+      "order_id": "O101",
+      "priority": "urgent",
+      "total_weight_kg": 20.0,
+      "shelf_id": "S1"
+    },
+    "robots": [
+      {
+        "robot_id": "R1",
+        "battery_level": 82.5,
+        "maximum_load_kg": 50.0,
+        "current_zone_id": "ZONE-A",
+        "current_workload": 0,
+        "status": "available"
+      },
+      {
+        "robot_id": "R2",
+        "battery_level": 15.0,
+        "maximum_load_kg": 30.0,
+        "current_zone_id": "ZONE-B",
+        "current_workload": 1,
+        "status": "available"
+      },
+      {
+        "robot_id": "R3",
+        "battery_level": 70.0,
+        "maximum_load_kg": 40.0,
+        "current_zone_id": "ZONE-D",
+        "current_workload": 1,
+        "status": "available"
+      },
+      {
+        "robot_id": "R4",
+        "battery_level": 91.0,
+        "maximum_load_kg": 25.0,
+        "current_zone_id": "ZONE-E",
+        "current_workload": 2,
+        "status": "busy"
+      },
+      {
+        "robot_id": "R5",
+        "battery_level": 60.0,
+        "maximum_load_kg": 60.0,
+        "current_zone_id": "ZONE-F",
+        "current_workload": 0,
+        "status": "failed"
+      }
+    ],
+    "shelf": {
+      "shelf_id": "S1",
+      "zone_id": "ZONE-B",
+      "status": "unknown",
+      "confidence": 0.0,
+      "requires_manual_review": true
+    },
+    "forecast": {
+      "expected_orders": 24,
+      "load_level": "low"
+    },
+    "generated_at": "2026-07-12T04:00:43.437020Z"
+  }
+}
