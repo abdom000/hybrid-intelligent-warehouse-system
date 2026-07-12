@@ -1,0 +1,52 @@
+[
+  {
+    "robot_id": "R1",
+    "current_zone_id": "ZONE-A",
+    "battery_level": 82.5,
+    "maximum_load_kg": 50.0,
+    "current_load_kg": 0.0,
+    "current_workload": 0,
+    "status": "available",
+    "updated_at": "2026-07-01T13:54:00Z"
+  },
+  {
+    "robot_id": "R2",
+    "current_zone_id": "ZONE-B",
+    "battery_level": 15.0,
+    "maximum_load_kg": 30.0,
+    "current_load_kg": 0.0,
+    "current_workload": 1,
+    "status": "available",
+    "updated_at": "2026-07-01T13:54:10Z"
+  },
+  {
+    "robot_id": "R3",
+    "current_zone_id": "ZONE-D",
+    "battery_level": 70.0,
+    "maximum_load_kg": 40.0,
+    "current_load_kg": 5.0,
+    "current_workload": 1,
+    "status": "available",
+    "updated_at": "2026-07-01T13:54:20Z"
+  },
+  {
+    "robot_id": "R4",
+    "current_zone_id": "ZONE-E",
+    "battery_level": 91.0,
+    "maximum_load_kg": 25.0,
+    "current_load_kg": 10.0,
+    "current_workload": 2,
+    "status": "busy",
+    "updated_at": "2026-07-01T13:54:30Z"
+  },
+  {
+    "robot_id": "R5",
+    "current_zone_id": "ZONE-F",
+    "battery_level": 60.0,
+    "maximum_load_kg": 60.0,
+    "current_load_kg": 0.0,
+    "current_workload": 0,
+    "status": "failed",
+    "updated_at": "2026-07-01T13:54:40Z"
+  }
+]

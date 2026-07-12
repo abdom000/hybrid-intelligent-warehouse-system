@@ -1,0 +1,32 @@
+[
+  {
+    "zone_id": "ZONE-A",
+    "name": "Robot Charging Area",
+    "active": true
+  },
+  {
+    "zone_id": "ZONE-B",
+    "name": "Storage Zone B",
+    "active": true
+  },
+  {
+    "zone_id": "ZONE-C",
+    "name": "Central Transit Zone",
+    "active": true
+  },
+  {
+    "zone_id": "ZONE-D",
+    "name": "Storage Zone D",
+    "active": true
+  },
+  {
+    "zone_id": "ZONE-E",
+    "name": "Packing Area",
+    "active": true
+  },
+  {
+    "zone_id": "ZONE-F",
+    "name": "Maintenance Zone",
+    "active": false
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "image_id": "IMG-S1-001",
+    "shelf_id": "S1",
+    "relative_path": "data/mock/shelf_images/shelf_s1_normal.jpg",
+    "expected_status": "normal",
+    "available": false
+  },
+  {
+    "image_id": "IMG-S2-001",
+    "shelf_id": "S2",
+    "relative_path": "data/mock/shelf_images/shelf_s2_low_stock.jpg",
+    "expected_status": "low_stock",
+    "available": false
+  },
+  {
+    "image_id": "IMG-S3-001",
+    "shelf_id": "S3",
+    "relative_path": "data/mock/shelf_images/shelf_s3_full.jpg",
+    "expected_status": "full",
+    "available": false
+  },
+  {
+    "image_id": "IMG-S4-001",
+    "shelf_id": "S4",
+    "relative_path": "data/mock/shelf_images/shelf_s4_empty.jpg",
+    "expected_status": "empty",
+    "available": false
+  },
+  {
+    "image_id": "IMG-S5-001",
+    "shelf_id": "S5",
+    "relative_path": "data/mock/shelf_images/shelf_s5_unknown.jpg",
+    "expected_status": "unknown",
+    "available": false
+  }
+]

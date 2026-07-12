@@ -1,0 +1,42 @@
+[
+  {
+    "shelf_id": "S1",
+    "zone_id": "ZONE-B",
+    "product_id": "P1",
+    "status": "normal",
+    "available_quantity": 30,
+    "last_updated_at": "2026-07-01T13:55:00Z"
+  },
+  {
+    "shelf_id": "S2",
+    "zone_id": "ZONE-B",
+    "product_id": "P2",
+    "status": "low_stock",
+    "available_quantity": 4,
+    "last_updated_at": "2026-07-01T13:55:00Z"
+  },
+  {
+    "shelf_id": "S3",
+    "zone_id": "ZONE-D",
+    "product_id": "P3",
+    "status": "full",
+    "available_quantity": 40,
+    "last_updated_at": "2026-07-01T13:55:00Z"
+  },
+  {
+    "shelf_id": "S4",
+    "zone_id": "ZONE-D",
+    "product_id": "P4",
+    "status": "empty",
+    "available_quantity": 0,
+    "last_updated_at": "2026-07-01T13:55:00Z"
+  },
+  {
+    "shelf_id": "S5",
+    "zone_id": "ZONE-E",
+    "product_id": "P5",
+    "status": "unknown",
+    "available_quantity": 12,
+    "last_updated_at": "2026-07-01T13:55:00Z"
+  }
+]
