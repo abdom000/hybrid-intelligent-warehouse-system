@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "order_id": "O101",
+  "shelf_id": "S1",
+  "robot_count": 5,
+  "forecast_expected_orders": 72,
+  "forecast_load_level": "medium",
+  "shelf_status": "normal",
+  "requires_manual_review": false,
+  "generated_at": "2026-07-12T03:53:29.046787+00:00"
+}
