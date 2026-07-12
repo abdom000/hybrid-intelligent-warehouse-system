@@ -1,0 +1,50 @@
+[
+  {
+    "scenario_id": "SCENARIO-001",
+    "name": "Successful urgent assignment",
+    "order_id": "O101",
+    "expected_decision": "assigned",
+    "expected_selected_robot_id": "R1",
+    "notes": "R1 is available, has sufficient battery and load capacity, and has a valid route."
+  },
+  {
+    "scenario_id": "SCENARIO-002",
+    "name": "Battery rejection",
+    "order_id": "O102",
+    "expected_decision": "assigned",
+    "expected_rejected_robot_ids": [
+      "R2"
+    ],
+    "notes": "R2 must be rejected because battery level is below 20 percent."
+  },
+  {
+    "scenario_id": "SCENARIO-003",
+    "name": "No robot with enough capacity",
+    "order_id": "O103",
+    "expected_decision": "rejected",
+    "notes": "Order weight is 54 kg; all available robots have lower maximum capacity."
+  },
+  {
+    "scenario_id": "SCENARIO-004",
+    "name": "Empty shelf rejection",
+    "order_id": "O104",
+    "expected_decision": "rejected",
+    "notes": "Shelf S4 is empty."
+  },
+  {
+    "scenario_id": "SCENARIO-005",
+    "name": "Manual review required",
+    "order_id": "O105",
+    "expected_decision": "manual_review_required",
+    "notes": "Shelf S5 status is unknown and should be paired with a low-confidence prediction."
+  },
+  {
+    "scenario_id": "SCENARIO-006",
+    "name": "Robot failure and replanning",
+    "order_id": "O101",
+    "failed_robot_id": "R1",
+    "expected_replacement_robot_id": "R3",
+    "expected_status": "reassigned",
+    "notes": "After R1 fails, R3 is the best remaining valid candidate."
+  }
+]

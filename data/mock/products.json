@@ -1,0 +1,38 @@
+[
+  {
+    "product_id": "P1",
+    "name": "Electronic Component Box",
+    "unit_weight_kg": 10.0,
+    "active": true
+  },
+  {
+    "product_id": "P2",
+    "name": "Medical Supply Package",
+    "unit_weight_kg": 6.5,
+    "active": true
+  },
+  {
+    "product_id": "P3",
+    "name": "Machine Spare Parts",
+    "unit_weight_kg": 18.0,
+    "active": true
+  },
+  {
+    "product_id": "P4",
+    "name": "Office Paper Carton",
+    "unit_weight_kg": 12.5,
+    "active": true
+  },
+  {
+    "product_id": "P5",
+    "name": "Cleaning Materials",
+    "unit_weight_kg": 8.0,
+    "active": true
+  },
+  {
+    "product_id": "P6",
+    "name": "Archived Product",
+    "unit_weight_kg": 4.0,
+    "active": false
+  }
+]
