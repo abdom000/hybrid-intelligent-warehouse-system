@@ -8,3 +8,6 @@ __pycache__/
 .pytest_cache/
 # Machine-learning artifacts
 data/processed/*.joblib
+
+# Local virtual environment
+.venv/
