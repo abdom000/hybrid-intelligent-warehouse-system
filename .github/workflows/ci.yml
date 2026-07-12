@@ -38,5 +38,11 @@ jobs:
       - name: Validate shared schemas
         run: python scripts/validate_schemas.py
 
+      - name: Validate shelf recognition
+        run: python scripts/validate_shelf_recognition.py
+
+      - name: Validate ML integration
+        run: python scripts/validate_ml_integration.py
+
       - name: Run unit tests
         run: pytest
