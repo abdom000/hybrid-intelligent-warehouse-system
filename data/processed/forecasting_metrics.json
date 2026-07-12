@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-07-12T03:15:41.850904+00:00",
+  "train_rows": 249,
+  "test_rows": 63,
+  "mae": 10.075,
+  "rmse": 13.7329,
+  "r2": 0.9133,
+  "baseline_mae": 16.3492,
+  "improvement_over_baseline_percent": 38.38,
+  "model_type": "RandomForestRegressor",
+  "feature_columns": [
+    "hour_sin",
+    "hour_cos",
+    "day_sin",
+    "day_cos",
+    "is_weekend",
+    "lag_1",
+    "lag_24",
+    "rolling_mean_24"
+  ],
+  "is_fitted": true
+}
