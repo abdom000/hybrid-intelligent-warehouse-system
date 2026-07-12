@@ -13,12 +13,11 @@ dependencies = [
     "pandas>=2.2,<3",
     "scikit-learn>=1.5,<2",
     "joblib>=1.4,<2",
+    "Pillow>=10,<12",
 ]
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=8,<9",
-]
+dev = ["pytest>=8,<9"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
