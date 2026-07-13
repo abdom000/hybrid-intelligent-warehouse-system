@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "hybrid-intelligent-warehouse-system"
 version = "0.1.0"
-description = "Hybrid intelligent warehouse system combining ML components and an expert system."
+description = "Hybrid intelligent warehouse system combining ML components and a mivar expert system."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -14,10 +14,12 @@ dependencies = [
     "scikit-learn>=1.5,<2",
     "joblib>=1.4,<2",
     "Pillow>=10,<12",
+    "fastapi>=0.111,<1",
+    "uvicorn>=0.30,<1",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8,<9"]
+dev = ["pytest>=8,<9", "httpx>=0.27,<1"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}

@@ -1,0 +1,91 @@
+{
+  "model": "VSO",
+  "description": "Mivar knowledge model of the warehouse domain using the Thing-Property-Relation (Vesch-Svoystvo-Otnoshenie) structure. Production rules in rules.json may only reference properties registered here.",
+  "version": "1.0.0",
+  "things": [
+    {
+      "thing_id": "order",
+      "name": "Customer order",
+      "properties": [
+        {"property_id": "order.order_id", "name": "Order identifier", "value_type": "string"},
+        {"property_id": "order.priority", "name": "Order priority", "value_type": "string", "allowed_values": ["low", "normal", "high", "urgent"]},
+        {"property_id": "order.total_weight_kg", "name": "Total order weight in kilograms", "value_type": "number"},
+        {"property_id": "order.shelf_id", "name": "Shelf that stores the ordered product", "value_type": "string"}
+      ]
+    },
+    {
+      "thing_id": "robot",
+      "name": "Delivery robot",
+      "properties": [
+        {"property_id": "robot.robot_id", "name": "Robot identifier", "value_type": "string"},
+        {"property_id": "robot.status", "name": "Operational status", "value_type": "string", "allowed_values": ["available", "busy", "charging", "failed", "maintenance"]},
+        {"property_id": "robot.battery_level", "name": "Battery level in percent", "value_type": "number"},
+        {"property_id": "robot.maximum_load_kg", "name": "Maximum payload in kilograms", "value_type": "number"},
+        {"property_id": "robot.current_zone_id", "name": "Zone where the robot currently is", "value_type": "string"},
+        {"property_id": "robot.current_workload", "name": "Number of tasks currently queued", "value_type": "number"}
+      ]
+    },
+    {
+      "thing_id": "shelf",
+      "name": "Storage shelf",
+      "properties": [
+        {"property_id": "shelf.shelf_id", "name": "Shelf identifier", "value_type": "string"},
+        {"property_id": "shelf.zone_id", "name": "Zone where the shelf is located", "value_type": "string"},
+        {"property_id": "shelf.status", "name": "Recognized shelf state", "value_type": "string", "allowed_values": ["empty", "low_stock", "normal", "full", "unknown"]},
+        {"property_id": "shelf.confidence", "name": "Confidence of the shelf-state recognition", "value_type": "number"},
+        {"property_id": "shelf.requires_manual_review", "name": "Recognition requires a human check", "value_type": "boolean"}
+      ]
+    },
+    {
+      "thing_id": "forecast",
+      "name": "Order-flow forecast",
+      "properties": [
+        {"property_id": "forecast.expected_orders", "name": "Expected orders in the next hour", "value_type": "number"},
+        {"property_id": "forecast.load_level", "name": "Predicted warehouse load level", "value_type": "string", "allowed_values": ["low", "medium", "high"]}
+      ]
+    },
+    {
+      "thing_id": "zone",
+      "name": "Warehouse zone",
+      "properties": [
+        {"property_id": "zone.zone_id", "name": "Zone identifier", "value_type": "string"},
+        {"property_id": "zone.active", "name": "Zone is operational", "value_type": "boolean"}
+      ]
+    },
+    {
+      "thing_id": "path",
+      "name": "Path between two zones",
+      "properties": [
+        {"property_id": "path.path_id", "name": "Path identifier", "value_type": "string"},
+        {"property_id": "path.distance_meters", "name": "Path length in meters", "value_type": "number"},
+        {"property_id": "path.active", "name": "Path is passable", "value_type": "boolean"}
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "relation_id": "order_requires_shelf",
+      "name": "Order requires a product stored on a shelf",
+      "from": "order.shelf_id",
+      "to": "shelf.shelf_id"
+    },
+    {
+      "relation_id": "shelf_located_in_zone",
+      "name": "Shelf is located in a zone",
+      "from": "shelf.zone_id",
+      "to": "zone.zone_id"
+    },
+    {
+      "relation_id": "robot_located_in_zone",
+      "name": "Robot is currently in a zone",
+      "from": "robot.current_zone_id",
+      "to": "zone.zone_id"
+    },
+    {
+      "relation_id": "path_connects_zones",
+      "name": "Path connects two zones",
+      "from": "path.path_id",
+      "to": "zone.zone_id"
+    }
+  ]
+}

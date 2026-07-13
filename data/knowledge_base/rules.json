@@ -1,0 +1,157 @@
+[
+  {
+    "rule_id": "RULE-SHELF-EMPTY",
+    "name": "Empty shelf blocks the order",
+    "description": "IF the recognized shelf status is 'empty' THEN the order cannot be fulfilled and must be rejected.",
+    "conditions": [
+      {"field": "shelf.status", "operator": "==", "value": "empty"}
+    ],
+    "actions": [
+      {"type": "reject_order", "reason": "Target shelf is empty; the ordered product is not on the shelf."}
+    ],
+    "priority": 100,
+    "active": true,
+    "version": "1.0.0"
+  },
+  {
+    "rule_id": "RULE-SHELF-MANUAL-REVIEW",
+    "name": "Flagged shelf recognition requires a human",
+    "description": "IF shelf recognition flags manual review THEN the decision is delegated to a human operator.",
+    "conditions": [
+      {"field": "shelf.requires_manual_review", "operator": "==", "value": true}
+    ],
+    "actions": [
+      {"type": "require_manual_review", "reason": "Shelf-state recognition flagged the result for manual review."}
+    ],
+    "priority": 95,
+    "active": true,
+    "version": "1.0.0"
+  },
+  {
+    "rule_id": "RULE-SHELF-UNKNOWN",
+    "name": "Unknown shelf state requires a human",
+    "description": "IF the recognized shelf status is 'unknown' THEN a human operator must confirm the shelf state before assignment.",
+    "conditions": [
+      {"field": "shelf.status", "operator": "==", "value": "unknown"}
+    ],
+    "actions": [
+      {"type": "require_manual_review", "reason": "Shelf state is unknown; a human must confirm the shelf before assignment."}
+    ],
+    "priority": 94,
+    "active": true,
+    "version": "1.0.0"
+  },
+  {
+    "rule_id": "RULE-SHELF-LOW-CONFIDENCE",
+    "name": "Low-confidence recognition requires a human",
+    "description": "IF the shelf-recognition confidence is below 0.60 THEN the prediction is not trusted automatically.",
+    "conditions": [
+      {"field": "shelf.confidence", "operator": "<", "value": 0.6}
+    ],
+    "actions": [
+      {"type": "require_manual_review", "reason": "Shelf-recognition confidence is below the 0.60 trust threshold."}
+    ],
+    "priority": 93,
+    "active": true,
+    "version": "1.0.0"
+  },
+  {
+    "rule_id": "RULE-ROBOT-NOT-AVAILABLE",
+    "name": "Only available robots may take orders",
+    "description": "IF a robot status is not 'available' THEN the robot is excluded from candidate selection.",
+    "conditions": [
+      {"field": "robot.status", "operator": "!=", "value": "available"}
+    ],
+    "actions": [
+      {"type": "reject_robot", "reason": "Robot is not available (busy, charging, failed, or in maintenance)."}
+    ],
+    "priority": 90,
+    "active": true,
+    "version": "1.0.0"
+  },
+  {
+    "rule_id": "RULE-ROBOT-LOW-BATTERY",
+    "name": "Low battery blocks assignment",
+    "description": "IF a robot battery level is below 20 percent THEN the robot must charge instead of taking new orders.",
+    "conditions": [
+      {"field": "robot.battery_level", "operator": "<", "value": 20}
+    ],
+    "actions": [
+      {"type": "reject_robot", "reason": "Battery level is below the 20% safety threshold."}
+    ],
+    "priority": 85,
+    "active": true,
+    "version": "1.0.0"
+  },
+  {
+    "rule_id": "RULE-ROBOT-CAPACITY",
+    "name": "Payload capacity must cover the order weight",
+    "description": "IF a robot maximum payload is lower than the order weight THEN the robot cannot carry the order.",
+    "conditions": [
+      {"field": "robot.maximum_load_kg", "operator": "<", "value": "fact:order.total_weight_kg"}
+    ],
+    "actions": [
+      {"type": "reject_robot", "reason": "Maximum payload capacity is below the order weight."}
+    ],
+    "priority": 80,
+    "active": true,
+    "version": "1.0.0"
+  },
+  {
+    "rule_id": "RULE-ROBOT-OVERLOADED",
+    "name": "Overloaded robots are skipped",
+    "description": "IF a robot already has 3 or more queued tasks THEN it must not receive additional orders.",
+    "conditions": [
+      {"field": "robot.current_workload", "operator": ">=", "value": 3}
+    ],
+    "actions": [
+      {"type": "reject_robot", "reason": "Robot already has 3 or more queued tasks."}
+    ],
+    "priority": 75,
+    "active": true,
+    "version": "1.0.0"
+  },
+  {
+    "rule_id": "RULE-URGENT-PRIORITIZE-SPEED",
+    "name": "Urgent orders prioritize travel speed",
+    "description": "IF the order priority is 'urgent' or 'high' THEN candidate ranking must weight travel distance more heavily.",
+    "conditions": [
+      {"field": "order.priority", "operator": "in", "value": ["urgent", "high"]}
+    ],
+    "actions": [
+      {"type": "add_constraint", "reason": "prioritize_speed"}
+    ],
+    "priority": 50,
+    "active": true,
+    "version": "1.0.0"
+  },
+  {
+    "rule_id": "RULE-HIGH-LOAD-BALANCE-WORKLOAD",
+    "name": "High predicted load balances workload",
+    "description": "IF the forecast load level is 'high' THEN candidate ranking must prefer robots with a low current workload.",
+    "conditions": [
+      {"field": "forecast.load_level", "operator": "==", "value": "high"}
+    ],
+    "actions": [
+      {"type": "add_constraint", "reason": "prefer_low_workload"}
+    ],
+    "priority": 45,
+    "active": true,
+    "version": "1.0.0"
+  },
+  {
+    "rule_id": "RULE-HIGH-LOAD-BATTERY-RESERVE",
+    "name": "High predicted load requires battery reserve",
+    "description": "IF the forecast load level is 'high' AND a robot battery level is below 40 percent THEN the robot is kept in reserve for charging.",
+    "conditions": [
+      {"field": "forecast.load_level", "operator": "==", "value": "high"},
+      {"field": "robot.battery_level", "operator": "<", "value": 40}
+    ],
+    "actions": [
+      {"type": "reject_robot", "reason": "High predicted load requires at least 40% battery reserve."}
+    ],
+    "priority": 40,
+    "active": true,
+    "version": "1.0.0"
+  }
+]

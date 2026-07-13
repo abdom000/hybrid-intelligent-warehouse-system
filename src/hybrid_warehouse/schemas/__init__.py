@@ -1,5 +1,6 @@
 from .assignment import (
     FinalAssignmentDecision,
+    RankedCandidate,
     ReplanningResult,
     RobotFailureEvent,
     RobotRankingCandidate,
@@ -55,6 +56,7 @@ __all__ = [
     "OrderPriority",
     "OrderStatus",
     "Product",
+    "RankedCandidate",
     "RejectedRobot",
     "ReplanningResult",
     "ReplanningScenario",
