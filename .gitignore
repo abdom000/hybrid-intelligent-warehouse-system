@@ -9,5 +9,12 @@ __pycache__/
 # Machine-learning artifacts
 data/processed/*.joblib
 
+# Local runtime database
+data/warehouse.db
+
 # Local virtual environment
 .venv/
+
+# Personal local notes (not part of the repository)
+CALISMA_NOTLARI_TR.md
+STUDY_NOTES.md

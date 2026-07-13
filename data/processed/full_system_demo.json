@@ -1,0 +1,554 @@
+{
+  "demo_status": "passed",
+  "forecast": {
+    "forecast_time": "2026-07-01T00:00:00Z",
+    "forecast_horizon_minutes": 60,
+    "expected_orders": 24,
+    "load_level": "low",
+    "model_version": "random-forest-1.0",
+    "generated_at": "2026-07-13T14:24:46.848230Z"
+  },
+  "scenarios": [
+    {
+      "scenario": {
+        "scenario_id": "SCENARIO-001",
+        "name": "Successful urgent assignment",
+        "order_id": "O101",
+        "expected_decision": "assigned",
+        "expected_selected_robot_id": "R1",
+        "notes": "R1 is available, has sufficient battery and load capacity, and has a valid route."
+      },
+      "passed": true,
+      "actual": {
+        "decision": "assigned",
+        "selected_robot_id": "R1",
+        "rejected_robot_ids": [
+          "R2",
+          "R4",
+          "R5"
+        ]
+      },
+      "decision": {
+        "decision_id": "D-20C3D26C4E",
+        "assignment_id": "A-456F8A0846",
+        "order_id": "O101",
+        "decision": "assigned",
+        "selected_robot_id": "R1",
+        "route": [
+          "ZONE-A",
+          "ZONE-C",
+          "ZONE-B"
+        ],
+        "distance_meters": 45.0,
+        "forecast_summary": {
+          "expected_orders": 24,
+          "load_level": "low"
+        },
+        "shelf_summary": {
+          "shelf_id": "S1",
+          "status": "normal",
+          "confidence": 0.92
+        },
+        "rejected_robots": [
+          {
+            "robot_id": "R2",
+            "reasons": [
+              "Battery level is below the 20% safety threshold."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-LOW-BATTERY"
+            ]
+          },
+          {
+            "robot_id": "R4",
+            "reasons": [
+              "Robot is not available (busy, charging, failed, or in maintenance)."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-NOT-AVAILABLE"
+            ]
+          },
+          {
+            "robot_id": "R5",
+            "reasons": [
+              "Robot is not available (busy, charging, failed, or in maintenance)."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-NOT-AVAILABLE"
+            ]
+          }
+        ],
+        "explanation": [
+          "Facts received for order O101: 5 candidate robots, shelf S1 (normal, confidence 0.92), forecast load 'low'.",
+          "Rule RULE-URGENT-PRIORITIZE-SPEED fired: IF order.priority in ['urgent', 'high'] THEN add_constraint: prioritize_speed",
+          "Robot R1 passed all robot rules.",
+          "Robot R2 rejected by RULE-ROBOT-LOW-BATTERY: Battery level is below the 20% safety threshold.",
+          "Robot R3 passed all robot rules.",
+          "Robot R4 rejected by RULE-ROBOT-NOT-AVAILABLE: Robot is not available (busy, charging, failed, or in maintenance).",
+          "Robot R5 rejected by RULE-ROBOT-NOT-AVAILABLE: Robot is not available (busy, charging, failed, or in maintenance).",
+          "Inference finished: 2 eligible robots, 3 rejected, constraints: ['prioritize_speed'].",
+          "Robot R1 route planned: ZONE-A -> ZONE-C -> ZONE-B (45.0 m, ~38.0 s).",
+          "Robot R3 route planned: ZONE-D -> ZONE-C -> ZONE-B (55.0 m, ~46.0 s).",
+          "Ranking: Robot R1 has the highest weighted score 0.5398 (weights: battery 0.29, workload 0.21, distance 0.50; constraints: prioritize_speed).",
+          "Final decision: order O101 assigned to robot R1."
+        ],
+        "created_at": "2026-07-13T14:24:46.849497Z"
+      }
+    },
+    {
+      "scenario": {
+        "scenario_id": "SCENARIO-002",
+        "name": "Battery rejection",
+        "order_id": "O102",
+        "expected_decision": "assigned",
+        "expected_rejected_robot_ids": [
+          "R2"
+        ],
+        "notes": "R2 must be rejected because battery level is below 20 percent."
+      },
+      "passed": true,
+      "actual": {
+        "decision": "assigned",
+        "selected_robot_id": "R1",
+        "rejected_robot_ids": [
+          "R2",
+          "R4",
+          "R5"
+        ]
+      },
+      "decision": {
+        "decision_id": "D-BB2BD49891",
+        "assignment_id": "A-83936B7EEC",
+        "order_id": "O102",
+        "decision": "assigned",
+        "selected_robot_id": "R1",
+        "route": [
+          "ZONE-A",
+          "ZONE-C",
+          "ZONE-B"
+        ],
+        "distance_meters": 45.0,
+        "forecast_summary": {
+          "expected_orders": 24,
+          "load_level": "low"
+        },
+        "shelf_summary": {
+          "shelf_id": "S2",
+          "status": "low_stock",
+          "confidence": 0.92
+        },
+        "rejected_robots": [
+          {
+            "robot_id": "R2",
+            "reasons": [
+              "Battery level is below the 20% safety threshold."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-LOW-BATTERY"
+            ]
+          },
+          {
+            "robot_id": "R4",
+            "reasons": [
+              "Robot is not available (busy, charging, failed, or in maintenance)."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-NOT-AVAILABLE"
+            ]
+          },
+          {
+            "robot_id": "R5",
+            "reasons": [
+              "Robot is not available (busy, charging, failed, or in maintenance)."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-NOT-AVAILABLE"
+            ]
+          }
+        ],
+        "explanation": [
+          "Facts received for order O102: 5 candidate robots, shelf S2 (low_stock, confidence 0.92), forecast load 'low'.",
+          "Robot R1 passed all robot rules.",
+          "Robot R2 rejected by RULE-ROBOT-LOW-BATTERY: Battery level is below the 20% safety threshold.",
+          "Robot R3 passed all robot rules.",
+          "Robot R4 rejected by RULE-ROBOT-NOT-AVAILABLE: Robot is not available (busy, charging, failed, or in maintenance).",
+          "Robot R5 rejected by RULE-ROBOT-NOT-AVAILABLE: Robot is not available (busy, charging, failed, or in maintenance).",
+          "Inference finished: 2 eligible robots, 3 rejected, constraints: ['none'].",
+          "Robot R1 route planned: ZONE-A -> ZONE-C -> ZONE-B (45.0 m, ~38.0 s).",
+          "Robot R3 route planned: ZONE-D -> ZONE-C -> ZONE-B (55.0 m, ~46.0 s).",
+          "Ranking: Robot R1 has the highest weighted score 0.6114 (weights: battery 0.35, workload 0.25, distance 0.40).",
+          "Final decision: order O102 assigned to robot R1."
+        ],
+        "created_at": "2026-07-13T14:24:46.850107Z"
+      }
+    },
+    {
+      "scenario": {
+        "scenario_id": "SCENARIO-003",
+        "name": "No robot with enough capacity",
+        "order_id": "O103",
+        "expected_decision": "rejected",
+        "notes": "Order weight is 54 kg; all available robots have lower maximum capacity."
+      },
+      "passed": true,
+      "actual": {
+        "decision": "rejected",
+        "selected_robot_id": null,
+        "rejected_robot_ids": [
+          "R1",
+          "R2",
+          "R3",
+          "R4",
+          "R5"
+        ]
+      },
+      "decision": {
+        "decision_id": "D-AB9D707C8C",
+        "assignment_id": null,
+        "order_id": "O103",
+        "decision": "rejected",
+        "selected_robot_id": null,
+        "route": [],
+        "distance_meters": null,
+        "forecast_summary": {
+          "expected_orders": 24,
+          "load_level": "low"
+        },
+        "shelf_summary": {
+          "shelf_id": "S3",
+          "status": "full",
+          "confidence": 0.92
+        },
+        "rejected_robots": [
+          {
+            "robot_id": "R1",
+            "reasons": [
+              "Maximum payload capacity is below the order weight."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-CAPACITY"
+            ]
+          },
+          {
+            "robot_id": "R2",
+            "reasons": [
+              "Battery level is below the 20% safety threshold.",
+              "Maximum payload capacity is below the order weight."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-LOW-BATTERY",
+              "RULE-ROBOT-CAPACITY"
+            ]
+          },
+          {
+            "robot_id": "R3",
+            "reasons": [
+              "Maximum payload capacity is below the order weight."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-CAPACITY"
+            ]
+          },
+          {
+            "robot_id": "R4",
+            "reasons": [
+              "Robot is not available (busy, charging, failed, or in maintenance).",
+              "Maximum payload capacity is below the order weight."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-NOT-AVAILABLE",
+              "RULE-ROBOT-CAPACITY"
+            ]
+          },
+          {
+            "robot_id": "R5",
+            "reasons": [
+              "Robot is not available (busy, charging, failed, or in maintenance)."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-NOT-AVAILABLE"
+            ]
+          }
+        ],
+        "explanation": [
+          "Facts received for order O103: 5 candidate robots, shelf S3 (full, confidence 0.92), forecast load 'low'.",
+          "Rule RULE-URGENT-PRIORITIZE-SPEED fired: IF order.priority in ['urgent', 'high'] THEN add_constraint: prioritize_speed",
+          "Robot R1 rejected by RULE-ROBOT-CAPACITY: Maximum payload capacity is below the order weight.",
+          "Robot R2 rejected by RULE-ROBOT-LOW-BATTERY, RULE-ROBOT-CAPACITY: Battery level is below the 20% safety threshold.; Maximum payload capacity is below the order weight.",
+          "Robot R3 rejected by RULE-ROBOT-CAPACITY: Maximum payload capacity is below the order weight.",
+          "Robot R4 rejected by RULE-ROBOT-NOT-AVAILABLE, RULE-ROBOT-CAPACITY: Robot is not available (busy, charging, failed, or in maintenance).; Maximum payload capacity is below the order weight.",
+          "Robot R5 rejected by RULE-ROBOT-NOT-AVAILABLE: Robot is not available (busy, charging, failed, or in maintenance).",
+          "Inference finished: 0 eligible robots, 5 rejected, constraints: ['prioritize_speed'].",
+          "Ranking: No candidate robots remained after rule filtering and route planning.",
+          "Final decision: order rejected. No suitable robot is currently able to serve this order."
+        ],
+        "created_at": "2026-07-13T14:24:46.850628Z"
+      }
+    },
+    {
+      "scenario": {
+        "scenario_id": "SCENARIO-004",
+        "name": "Empty shelf rejection",
+        "order_id": "O104",
+        "expected_decision": "rejected",
+        "notes": "Shelf S4 is empty."
+      },
+      "passed": true,
+      "actual": {
+        "decision": "rejected",
+        "selected_robot_id": null,
+        "rejected_robot_ids": [
+          "R2",
+          "R4",
+          "R5"
+        ]
+      },
+      "decision": {
+        "decision_id": "D-CB2A80F727",
+        "assignment_id": null,
+        "order_id": "O104",
+        "decision": "rejected",
+        "selected_robot_id": null,
+        "route": [],
+        "distance_meters": null,
+        "forecast_summary": {
+          "expected_orders": 24,
+          "load_level": "low"
+        },
+        "shelf_summary": {
+          "shelf_id": "S4",
+          "status": "empty",
+          "confidence": 0.92
+        },
+        "rejected_robots": [
+          {
+            "robot_id": "R2",
+            "reasons": [
+              "Battery level is below the 20% safety threshold."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-LOW-BATTERY"
+            ]
+          },
+          {
+            "robot_id": "R4",
+            "reasons": [
+              "Robot is not available (busy, charging, failed, or in maintenance)."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-NOT-AVAILABLE"
+            ]
+          },
+          {
+            "robot_id": "R5",
+            "reasons": [
+              "Robot is not available (busy, charging, failed, or in maintenance)."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-NOT-AVAILABLE"
+            ]
+          }
+        ],
+        "explanation": [
+          "Facts received for order O104: 5 candidate robots, shelf S4 (empty, confidence 0.92), forecast load 'low'.",
+          "Rule RULE-SHELF-EMPTY fired: IF shelf.status == 'empty' THEN reject_order: Target shelf is empty; the ordered product is not on the shelf.",
+          "Robot R1 passed all robot rules.",
+          "Robot R2 rejected by RULE-ROBOT-LOW-BATTERY: Battery level is below the 20% safety threshold.",
+          "Robot R3 passed all robot rules.",
+          "Robot R4 rejected by RULE-ROBOT-NOT-AVAILABLE: Robot is not available (busy, charging, failed, or in maintenance).",
+          "Robot R5 rejected by RULE-ROBOT-NOT-AVAILABLE: Robot is not available (busy, charging, failed, or in maintenance).",
+          "Inference finished: 2 eligible robots, 3 rejected, constraints: ['order_rejected', 'order_rejected_reason:Target shelf is empty; the ordered product is not on the shelf.'].",
+          "Final decision: order rejected. Target shelf is empty; the ordered product is not on the shelf."
+        ],
+        "created_at": "2026-07-13T14:24:46.851111Z"
+      }
+    },
+    {
+      "scenario": {
+        "scenario_id": "SCENARIO-005",
+        "name": "Manual review required",
+        "order_id": "O105",
+        "expected_decision": "manual_review_required",
+        "notes": "Shelf S5 status is unknown and should be paired with a low-confidence prediction."
+      },
+      "passed": true,
+      "actual": {
+        "decision": "manual_review_required",
+        "selected_robot_id": null,
+        "rejected_robot_ids": [
+          "R2",
+          "R4",
+          "R5"
+        ]
+      },
+      "decision": {
+        "decision_id": "D-4D645191A6",
+        "assignment_id": null,
+        "order_id": "O105",
+        "decision": "manual_review_required",
+        "selected_robot_id": null,
+        "route": [],
+        "distance_meters": null,
+        "forecast_summary": {
+          "expected_orders": 24,
+          "load_level": "low"
+        },
+        "shelf_summary": {
+          "shelf_id": "S5",
+          "status": "unknown",
+          "confidence": 0.3
+        },
+        "rejected_robots": [
+          {
+            "robot_id": "R2",
+            "reasons": [
+              "Battery level is below the 20% safety threshold."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-LOW-BATTERY"
+            ]
+          },
+          {
+            "robot_id": "R4",
+            "reasons": [
+              "Robot is not available (busy, charging, failed, or in maintenance)."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-NOT-AVAILABLE"
+            ]
+          },
+          {
+            "robot_id": "R5",
+            "reasons": [
+              "Robot is not available (busy, charging, failed, or in maintenance)."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-NOT-AVAILABLE"
+            ]
+          }
+        ],
+        "explanation": [
+          "Facts received for order O105: 5 candidate robots, shelf S5 (unknown, confidence 0.30), forecast load 'low'.",
+          "Rule RULE-SHELF-MANUAL-REVIEW fired: IF shelf.requires_manual_review == True THEN require_manual_review: Shelf-state recognition flagged the result for manual review.",
+          "Rule RULE-SHELF-UNKNOWN fired: IF shelf.status == 'unknown' THEN require_manual_review: Shelf state is unknown; a human must confirm the shelf before assignment.",
+          "Rule RULE-SHELF-LOW-CONFIDENCE fired: IF shelf.confidence < 0.6 THEN require_manual_review: Shelf-recognition confidence is below the 0.60 trust threshold.",
+          "Rule RULE-URGENT-PRIORITIZE-SPEED fired: IF order.priority in ['urgent', 'high'] THEN add_constraint: prioritize_speed",
+          "Robot R1 passed all robot rules.",
+          "Robot R2 rejected by RULE-ROBOT-LOW-BATTERY: Battery level is below the 20% safety threshold.",
+          "Robot R3 passed all robot rules.",
+          "Robot R4 rejected by RULE-ROBOT-NOT-AVAILABLE: Robot is not available (busy, charging, failed, or in maintenance).",
+          "Robot R5 rejected by RULE-ROBOT-NOT-AVAILABLE: Robot is not available (busy, charging, failed, or in maintenance).",
+          "Inference finished: 2 eligible robots, 3 rejected, constraints: ['manual_review_required', 'prioritize_speed'].",
+          "Final decision: manual review required. The shelf state cannot be trusted automatically, so a human operator must confirm it before any robot is dispatched."
+        ],
+        "created_at": "2026-07-13T14:24:46.851518Z"
+      }
+    },
+    {
+      "scenario": {
+        "scenario_id": "SCENARIO-006",
+        "name": "Robot failure and replanning",
+        "order_id": "O101",
+        "failed_robot_id": "R1",
+        "expected_replacement_robot_id": "R3",
+        "expected_status": "reassigned",
+        "notes": "After R1 fails, R3 is the best remaining valid candidate."
+      },
+      "passed": true,
+      "actual": {
+        "status": "reassigned",
+        "replacement_robot_id": "R3"
+      },
+      "first_decision": {
+        "decision_id": "D-998FF66422",
+        "assignment_id": "A-2AA2D77217",
+        "order_id": "O101",
+        "decision": "assigned",
+        "selected_robot_id": "R1",
+        "route": [
+          "ZONE-A",
+          "ZONE-C",
+          "ZONE-B"
+        ],
+        "distance_meters": 45.0,
+        "forecast_summary": {
+          "expected_orders": 24,
+          "load_level": "low"
+        },
+        "shelf_summary": {
+          "shelf_id": "S1",
+          "status": "normal",
+          "confidence": 0.92
+        },
+        "rejected_robots": [
+          {
+            "robot_id": "R2",
+            "reasons": [
+              "Battery level is below the 20% safety threshold."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-LOW-BATTERY"
+            ]
+          },
+          {
+            "robot_id": "R4",
+            "reasons": [
+              "Robot is not available (busy, charging, failed, or in maintenance)."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-NOT-AVAILABLE"
+            ]
+          },
+          {
+            "robot_id": "R5",
+            "reasons": [
+              "Robot is not available (busy, charging, failed, or in maintenance)."
+            ],
+            "applied_rules": [
+              "RULE-ROBOT-NOT-AVAILABLE"
+            ]
+          }
+        ],
+        "explanation": [
+          "Facts received for order O101: 5 candidate robots, shelf S1 (normal, confidence 0.92), forecast load 'low'.",
+          "Rule RULE-URGENT-PRIORITIZE-SPEED fired: IF order.priority in ['urgent', 'high'] THEN add_constraint: prioritize_speed",
+          "Robot R1 passed all robot rules.",
+          "Robot R2 rejected by RULE-ROBOT-LOW-BATTERY: Battery level is below the 20% safety threshold.",
+          "Robot R3 passed all robot rules.",
+          "Robot R4 rejected by RULE-ROBOT-NOT-AVAILABLE: Robot is not available (busy, charging, failed, or in maintenance).",
+          "Robot R5 rejected by RULE-ROBOT-NOT-AVAILABLE: Robot is not available (busy, charging, failed, or in maintenance).",
+          "Inference finished: 2 eligible robots, 3 rejected, constraints: ['prioritize_speed'].",
+          "Robot R1 route planned: ZONE-A -> ZONE-C -> ZONE-B (45.0 m, ~38.0 s).",
+          "Robot R3 route planned: ZONE-D -> ZONE-C -> ZONE-B (55.0 m, ~46.0 s).",
+          "Ranking: Robot R1 has the highest weighted score 0.5398 (weights: battery 0.29, workload 0.21, distance 0.50; constraints: prioritize_speed).",
+          "Final decision: order O101 assigned to robot R1."
+        ],
+        "created_at": "2026-07-13T14:24:46.851951Z"
+      },
+      "replanning": {
+        "previous_assignment_id": "A-2AA2D77217",
+        "new_assignment_id": "A-6F9418EA53",
+        "order_id": "O101",
+        "failed_robot_id": "R1",
+        "replacement_robot_id": "R3",
+        "status": "reassigned",
+        "explanation": [
+          "Robot R1 failed while executing assignment A-2AA2D77217: Simulated hardware failure during task execution.",
+          "Order O101 was returned to the queue and the assignment pipeline was re-run without the failed robot.",
+          "Facts received for order O101: 5 candidate robots, shelf S1 (normal, confidence 0.92), forecast load 'low'.",
+          "Rule RULE-URGENT-PRIORITIZE-SPEED fired: IF order.priority in ['urgent', 'high'] THEN add_constraint: prioritize_speed",
+          "Robot R1 rejected by RULE-ROBOT-NOT-AVAILABLE: Robot is not available (busy, charging, failed, or in maintenance).",
+          "Robot R2 rejected by RULE-ROBOT-LOW-BATTERY: Battery level is below the 20% safety threshold.",
+          "Robot R3 passed all robot rules.",
+          "Robot R4 rejected by RULE-ROBOT-NOT-AVAILABLE: Robot is not available (busy, charging, failed, or in maintenance).",
+          "Robot R5 rejected by RULE-ROBOT-NOT-AVAILABLE: Robot is not available (busy, charging, failed, or in maintenance).",
+          "Inference finished: 1 eligible robots, 4 rejected, constraints: ['prioritize_speed'].",
+          "Robot R3 route planned: ZONE-D -> ZONE-C -> ZONE-B (55.0 m, ~46.0 s).",
+          "Ranking: Robot R3 has the highest weighted score 0.3431 (weights: battery 0.29, workload 0.21, distance 0.50; constraints: prioritize_speed).",
+          "Final decision: order O101 assigned to robot R3."
+        ],
+        "replanned_at": "2026-07-13T14:24:46.852244Z"
+      }
+    }
+  ]
+}

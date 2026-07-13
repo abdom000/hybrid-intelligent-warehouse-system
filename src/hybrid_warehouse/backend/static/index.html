@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HiveWare — Control Dashboard</title>
+<style>
+  :root {
+    --surface-1: #fcfcfb;
+    --page: #f9f9f7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --muted: #898781;
+    --grid: #e1e0d9;
+    --border: rgba(11,11,11,0.10);
+    --series-1: #2a78d6;
+    --good: #0ca30c;
+    --good-text: #006300;
+    --warning: #fab219;
+    --serious: #ec835a;
+    --critical: #d03b3b;
+    --wash: rgba(11,11,11,0.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface-1: #1a1a19;
+      --page: #0d0d0d;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --muted: #898781;
+      --grid: #2c2c2a;
+      --border: rgba(255,255,255,0.10);
+      --series-1: #3987e5;
+      --good-text: #0ca30c;
+      --wash: rgba(255,255,255,0.06);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text-primary);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  header {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 14px 20px; border-bottom: 1px solid var(--grid);
+    background: var(--surface-1);
+  }
+  header h1 { font-size: 17px; margin: 0; font-weight: 650; }
+  header .sub { color: var(--muted); font-size: 12.5px; }
+  header .spacer { flex: 1; }
+  button {
+    font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface-1);
+    color: var(--text-primary); cursor: pointer;
+  }
+  button:hover { background: var(--wash); }
+  button.primary { background: var(--series-1); border-color: var(--series-1); color: #fff; }
+  button.primary:hover { filter: brightness(1.08); }
+  button.danger { color: var(--critical); border-color: var(--critical); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  main { padding: 18px 20px 60px; max-width: 1380px; margin: 0 auto; }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .tile {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .tile .label { font-size: 12px; color: var(--text-secondary); }
+  .tile .value { font-size: 28px; font-weight: 650; margin-top: 2px; }
+  .tile .hint { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+  .grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 14px; }
+  @media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
+  section.card {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+    min-width: 0;
+  }
+  section.card h2 { font-size: 13.5px; margin: 0 0 10px; font-weight: 650; letter-spacing: .01em; }
+  section.card h2 .note { color: var(--muted); font-weight: 400; font-size: 12px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: var(--muted); font-weight: 500; font-size: 11.5px;
+       border-bottom: 1px solid var(--grid); padding: 4px 8px 6px; }
+  td { padding: 6px 8px; border-bottom: 1px solid var(--grid); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  td.num { font-variant-numeric: tabular-nums; text-align: right; }
+  th.num { text-align: right; }
+  .scroll-x { overflow-x: auto; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+    border: 1px solid var(--border); white-space: nowrap;
+  }
+  .badge .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+
+  .log { display: flex; flex-direction: column; gap: 8px; max-height: 480px; overflow-y: auto; }
+  details.entry {
+    border: 1px solid var(--grid); border-radius: 10px; padding: 8px 12px;
+    background: var(--surface-1);
+  }
+  details.entry summary {
+    cursor: pointer; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    list-style: none;
+  }
+  details.entry summary::-webkit-details-marker { display: none; }
+  details.entry .when { color: var(--muted); font-size: 11.5px; margin-left: auto; }
+  details.entry ol { margin: 8px 0 4px; padding-left: 22px; color: var(--text-secondary); font-size: 12.5px; }
+  details.entry li { margin: 3px 0; }
+  .route { font-variant-numeric: tabular-nums; color: var(--text-secondary); font-size: 12px; }
+
+  .scenarios { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .scenario-row { display: flex; align-items: center; gap: 10px; border: 1px solid var(--grid);
+                  border-radius: 10px; padding: 8px 12px; flex-wrap: wrap; }
+  .scenario-row .name { font-weight: 600; font-size: 13px; }
+  .scenario-row .notes { color: var(--muted); font-size: 12px; width: 100%; }
+  .scenario-row .result { margin-left: auto; }
+
+  textarea {
+    width: 100%; min-height: 150px; font: 12px/1.5 ui-monospace, Consolas, monospace;
+    background: var(--page); color: var(--text-primary);
+    border: 1px solid var(--grid); border-radius: 8px; padding: 8px;
+    resize: vertical;
+  }
+  .rule-item { border-bottom: 1px solid var(--grid); padding: 7px 0; font-size: 12.5px; }
+  .rule-item:last-child { border-bottom: none; }
+  .rule-item .rid { font-weight: 600; }
+  .rule-item .desc { color: var(--text-secondary); }
+  .rule-item .meta { color: var(--muted); font-size: 11.5px; }
+
+  svg text { font: 11px system-ui, sans-serif; fill: var(--text-primary); }
+  svg .zone-box { fill: var(--wash); stroke: var(--grid); rx: 8; }
+  svg .zone-inactive { stroke-dasharray: 4 3; opacity: .55; }
+  svg .edge { stroke: var(--muted); stroke-width: 2; }
+  svg .edge-inactive { stroke-dasharray: 5 4; opacity: .5; }
+  svg .zone-name { fill: var(--text-secondary); font-size: 10px; }
+
+  #toast {
+    position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+    background: var(--text-primary); color: var(--page);
+    padding: 9px 16px; border-radius: 10px; font-size: 13px;
+    opacity: 0; pointer-events: none; transition: opacity .25s; max-width: 80vw;
+    z-index: 50;
+  }
+  #toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>HiveWare <span style="font-weight:400; color:var(--muted); font-size:13px">— Hybrid Intelligent Warehouse System</span></h1>
+    <div class="sub">Neural forecasting + shelf recognition → mivar expert system → routing → robot assignment</div>
+  </div>
+  <div class="spacer"></div>
+  <button id="btn-reload-rules" title="Re-read rules.json without restarting">↻ Reload rules</button>
+  <button id="btn-reset" class="danger" title="Restore mock data and clear history">Reset demo</button>
+</header>
+
+<main>
+  <div class="tiles" id="tiles"></div>
+
+  <div class="grid">
+    <div>
+      <section class="card">
+        <h2>Warehouse map <span class="note">— zones, paths, robots and shelves (dashed = inactive)</span></h2>
+        <svg id="map" viewBox="0 0 620 420" width="100%" role="img" aria-label="Warehouse zone map"></svg>
+      </section>
+
+      <section class="card">
+        <h2>Scenario runner <span class="note">— documented system scenarios, expected vs. actual</span></h2>
+        <div class="scenarios" id="scenarios"></div>
+      </section>
+
+      <section class="card">
+        <h2>Knowledge base <span class="note">— production rules (IF … THEN), hot-reloadable</span></h2>
+        <div id="rules"></div>
+        <details style="margin-top:10px">
+          <summary style="cursor:pointer; font-weight:600; font-size:13px">➕ Add a new rule at runtime (evolutionary extension)</summary>
+          <p style="color:var(--text-secondary); font-size:12.5px">
+            The rule is validated against the VSO model, appended to <code>rules.json</code>,
+            and becomes active immediately — no restart. Example: urgent orders start requiring 75% battery.
+          </p>
+          <textarea id="new-rule"></textarea>
+          <div style="margin-top:8px; display:flex; gap:8px">
+            <button class="primary" id="btn-add-rule">Add rule</button>
+          </div>
+        </details>
+      </section>
+    </div>
+
+    <div>
+      <section class="card">
+        <h2>Orders <span class="note">— click Assign to run the full hybrid pipeline</span></h2>
+        <div class="scroll-x"><table id="orders"></table></div>
+      </section>
+
+      <section class="card">
+        <h2>Robots <span class="note">— Fail simulates a breakdown and triggers replanning</span></h2>
+        <div class="scroll-x"><table id="robots"></table></div>
+      </section>
+
+      <section class="card">
+        <h2>Shelves <span class="note">— recognized state feeds the expert system as facts</span></h2>
+        <div class="scroll-x"><table id="shelves"></table></div>
+      </section>
+    </div>
+  </div>
+
+  <section class="card">
+    <h2>Decision log <span class="note">— every decision is persisted with its full rule-level explanation</span></h2>
+    <div class="log" id="log"></div>
+  </section>
+</main>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+
+const STATUS_COLORS = {
+  // robots
+  available:  "var(--good)",
+  busy:       "var(--series-1)",
+  charging:   "var(--warning)",
+  failed:     "var(--critical)",
+  maintenance:"var(--muted)",
+  // shelves
+  empty:      "var(--critical)",
+  low_stock:  "var(--warning)",
+  normal:     "var(--good)",
+  full:       "var(--series-1)",
+  unknown:    "var(--muted)",
+  // orders / decisions
+  pending:    "var(--muted)",
+  assigned:   "var(--good)",
+  in_progress:"var(--series-1)",
+  completed:  "var(--good)",
+  rejected:   "var(--critical)",
+  cancelled:  "var(--muted)",
+  manual_review_required: "var(--warning)",
+  reassigned: "var(--good)",
+  reassignment_failed: "var(--critical)",
+  low:  "var(--good)",
+  medium: "var(--warning)",
+  high: "var(--critical)",
+};
+
+const ZONE_POS = {
+  "ZONE-A": [30, 175], "ZONE-B": [240, 30], "ZONE-C": [240, 175],
+  "ZONE-D": [450, 175], "ZONE-E": [240, 320], "ZONE-F": [450, 320],
+};
+const ZONE_W = 140, ZONE_H = 74;
+
+const EXAMPLE_RULE = {
+  rule_id: "RULE-URGENT-MIN-BATTERY-75",
+  name: "Urgent orders need 75% battery",
+  description: "IF the order priority is 'urgent' AND a robot battery level is below 75 percent THEN the robot is rejected for this order.",
+  conditions: [
+    { field: "order.priority", operator: "==", value: "urgent" },
+    { field: "robot.battery_level", operator: "<", value: 75 }
+  ],
+  actions: [
+    { type: "reject_robot", reason: "Urgent orders require at least 75% battery." }
+  ],
+  priority: 60,
+  active: true,
+  version: "1.0.0"
+};
+
+let scenarioResults = {};
+
+function badge(text, color) {
+  return `<span class="badge"><span class="dot" style="background:${color}"></span>${text}</span>`;
+}
+function statusBadge(status) {
+  return badge(String(status).replaceAll("_", " "), STATUS_COLORS[status] || "var(--muted)");
+}
+function toast(message) {
+  const el = document.getElementById("toast");
+  el.textContent = message;
+  el.classList.add("show");
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove("show"), 3200);
+}
+async function api(path, options) {
+  const response = await fetch(path, options);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const message = data.message || (data.detail && JSON.stringify(data.detail)) || response.statusText;
+    throw new Error(message);
+  }
+  return data;
+}
+
+function renderTiles(state) {
+  const robotsAvailable = state.robots.filter(robot => robot.status === "available").length;
+  const pending = state.orders.filter(order => order.status === "pending").length;
+  const activeRules = state.rules.filter(rule => rule.active).length;
+  document.getElementById("tiles").innerHTML = `
+    <div class="tile">
+      <div class="label">Forecast: expected orders (next hour)</div>
+      <div class="value">${state.forecast.expected_orders}</div>
+      <div class="hint">model ${state.forecast.model_version}</div>
+    </div>
+    <div class="tile">
+      <div class="label">Predicted warehouse load</div>
+      <div class="value" style="font-size:20px; padding-top:6px">${statusBadge(state.forecast.load_level)}</div>
+      <div class="hint">drives ranking constraints</div>
+    </div>
+    <div class="tile">
+      <div class="label">Robots available</div>
+      <div class="value">${robotsAvailable}<span style="font-size:15px; color:var(--muted)"> / ${state.robots.length}</span></div>
+      <div class="hint">rule-filtered per order</div>
+    </div>
+    <div class="tile">
+      <div class="label">Pending orders</div>
+      <div class="value">${pending}</div>
+      <div class="hint">of ${state.orders.length} total</div>
+    </div>
+    <div class="tile">
+      <div class="label">Active production rules</div>
+      <div class="value">${activeRules}</div>
+      <div class="hint">mivar knowledge base</div>
+    </div>`;
+}
+
+function renderMap(state) {
+  const zoneById = Object.fromEntries(state.zones.map(zone => [zone.zone_id, zone]));
+  let svg = "";
+
+  const center = id => {
+    const [x, y] = ZONE_POS[id] || [10, 10];
+    return [x + ZONE_W / 2, y + ZONE_H / 2];
+  };
+  const seen = new Set();
+  for (const path of state.paths) {
+    const key = [path.start_zone_id, path.end_zone_id].sort().join("|");
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const [x1, y1] = center(path.start_zone_id);
+    const [x2, y2] = center(path.end_zone_id);
+    svg += `<line class="edge ${path.active ? "" : "edge-inactive"}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"></line>`;
+    svg += `<text x="${(x1 + x2) / 2 + 6}" y="${(y1 + y2) / 2 - 6}" style="fill:var(--muted); font-size:10px">${path.distance_meters} m${path.active ? "" : " (closed)"}</text>`;
+  }
+
+  for (const [zoneId, [x, y]] of Object.entries(ZONE_POS)) {
+    const zone = zoneById[zoneId];
+    if (!zone) continue;
+    svg += `<rect class="zone-box ${zone.active ? "" : "zone-inactive"}" x="${x}" y="${y}" width="${ZONE_W}" height="${ZONE_H}" rx="8"></rect>
+            <text x="${x + 8}" y="${y + 16}" font-weight="600">${zoneId}</text>
+            <text class="zone-name" x="${x + 8}" y="${y + 29}">${zone.name}${zone.active ? "" : " — inactive"}</text>`;
+
+    const robotsHere = state.robots.filter(robot => robot.current_zone_id === zoneId);
+    robotsHere.forEach((robot, index) => {
+      const cx = x + 16 + index * 30, cy = y + 50;
+      const color = STATUS_COLORS[robot.status] || "var(--muted)";
+      svg += `<circle cx="${cx}" cy="${cy}" r="9" fill="${color}" stroke="var(--surface-1)" stroke-width="2">
+                <title>${robot.robot_id} — ${robot.status}, battery ${robot.battery_level}%</title>
+              </circle>
+              <text x="${cx}" y="${cy + 3.5}" text-anchor="middle" style="fill:#fff; font-size:9px; font-weight:700">${robot.robot_id}</text>`;
+    });
+
+    const shelvesHere = state.shelves.filter(shelf => shelf.zone_id === zoneId);
+    shelvesHere.forEach((shelf, index) => {
+      const sx = x + ZONE_W - 24 - index * 26, sy = y + 42;
+      const color = STATUS_COLORS[shelf.status] || "var(--muted)";
+      svg += `<rect x="${sx}" y="${sy}" width="18" height="18" rx="4" fill="${color}" stroke="var(--surface-1)" stroke-width="2">
+                <title>${shelf.shelf_id} — ${shelf.status}, qty ${shelf.available_quantity}</title>
+              </rect>
+              <text x="${sx + 9}" y="${sy + 13}" text-anchor="middle" style="fill:#fff; font-size:9px; font-weight:700">${shelf.shelf_id}</text>`;
+    });
+  }
+  document.getElementById("map").innerHTML = svg;
+}
+
+function renderOrders(state) {
+  const rows = state.orders.map(order => `
+    <tr>
+      <td><strong>${order.order_id}</strong></td>
+      <td>${order.product_id} → ${order.shelf_id}</td>
+      <td class="num">${order.total_weight_kg} kg</td>
+      <td>${statusBadge(order.priority)}</td>
+      <td>${statusBadge(order.status)}</td>
+      <td>${order.status === "pending"
+        ? `<button class="primary" data-assign="${order.order_id}">Assign</button>`
+        : ""}</td>
+    </tr>`).join("");
+  document.getElementById("orders").innerHTML = `
+    <tr><th>Order</th><th>Product → shelf</th><th class="num">Weight</th><th>Priority</th><th>Status</th><th></th></tr>${rows}`;
+}
+
+function renderRobots(state) {
+  const activeByRobot = Object.fromEntries(
+    state.active_assignments.map(item => [item.robot_id, item])
+  );
+  const rows = state.robots.map(robot => `
+    <tr>
+      <td><strong>${robot.robot_id}</strong></td>
+      <td>${robot.current_zone_id}</td>
+      <td class="num">${robot.battery_level}%</td>
+      <td class="num">${robot.maximum_load_kg} kg</td>
+      <td class="num">${robot.current_workload}</td>
+      <td>${statusBadge(robot.status)}${activeByRobot[robot.robot_id] ? " " + badge("order " + activeByRobot[robot.robot_id].order_id, "var(--series-1)") : ""}</td>
+      <td>${robot.status !== "failed"
+        ? `<button data-fail="${robot.robot_id}" title="Simulate breakdown">⚡ Fail</button>`
+        : ""}</td>
+    </tr>`).join("");
+  document.getElementById("robots").innerHTML = `
+    <tr><th>Robot</th><th>Zone</th><th class="num">Battery</th><th class="num">Capacity</th><th class="num">Tasks</th><th>Status</th><th></th></tr>${rows}`;
+}
+
+function renderShelves(state) {
+  const rows = state.shelves.map(shelf => `
+    <tr>
+      <td><strong>${shelf.shelf_id}</strong></td>
+      <td>${shelf.zone_id}</td>
+      <td>${shelf.product_id}</td>
+      <td class="num">${shelf.available_quantity}</td>
+      <td>${statusBadge(shelf.status)}</td>
+    </tr>`).join("");
+  document.getElementById("shelves").innerHTML = `
+    <tr><th>Shelf</th><th>Zone</th><th>Product</th><th class="num">Qty</th><th>Recognized state</th></tr>${rows}`;
+}
+
+function renderRules(state) {
+  document.getElementById("rules").innerHTML = state.rules.map(rule => `
+    <div class="rule-item">
+      <span class="rid">${rule.rule_id}</span>
+      ${rule.active ? "" : badge("inactive", "var(--muted)")}
+      <span class="meta">priority ${rule.priority} · v${rule.version}</span><br>
+      <span class="desc">${rule.description}</span>
+    </div>`).join("");
+}
+
+function renderScenarios(scenarios) {
+  document.getElementById("scenarios").innerHTML = scenarios.map(scenario => {
+    const result = scenarioResults[scenario.scenario_id];
+    let resultHtml = "";
+    if (result) {
+      resultHtml = result.passed
+        ? badge("PASSED — matches expectation", "var(--good)")
+        : badge("DIFFERS — " + JSON.stringify(result.actual), "var(--critical)");
+    }
+    return `
+    <div class="scenario-row">
+      <span class="name">${scenario.scenario_id}</span>
+      <span>${scenario.name}</span>
+      <span class="result">${resultHtml}</span>
+      <button class="primary" data-scenario="${scenario.scenario_id}">▶ Run</button>
+      <span class="notes">${scenario.notes} <em>(expected: ${scenario.expected_decision || scenario.expected_status})</em></span>
+    </div>`;
+  }).join("");
+}
+
+function decisionEntry(decision) {
+  const color = STATUS_COLORS[decision.decision] || "var(--muted)";
+  const route = decision.route && decision.route.length
+    ? `<span class="route">route ${decision.route.join(" → ")} (${decision.distance_meters} m)</span>` : "";
+  const robot = decision.selected_robot_id
+    ? badge("robot " + decision.selected_robot_id, "var(--series-1)") : "";
+  return `
+    <details class="entry">
+      <summary>
+        <strong>${decision.order_id}</strong>
+        ${statusBadge(decision.decision)}
+        ${robot} ${route}
+        <span class="when">${new Date(decision.created_at).toLocaleTimeString()}</span>
+      </summary>
+      <ol>${decision.explanation.map(step => `<li>${step}</li>`).join("")}</ol>
+    </details>`;
+}
+
+function replanningEntry(item) {
+  return `
+    <details class="entry">
+      <summary>
+        <strong>${item.order_id}</strong>
+        ${badge("replanning", "var(--warning)")}
+        ${statusBadge(item.status)}
+        ${item.replacement_robot_id ? badge(item.failed_robot_id + " → " + item.replacement_robot_id, "var(--series-1)") : badge("failed: " + item.failed_robot_id, "var(--critical)")}
+        <span class="when">${new Date(item.replanned_at).toLocaleTimeString()}</span>
+      </summary>
+      <ol>${item.explanation.map(step => `<li>${step}</li>`).join("")}</ol>
+    </details>`;
+}
+
+function renderLog(state) {
+  const entries = [
+    ...state.decisions.map(decision => ({ time: decision.created_at, html: decisionEntry(decision) })),
+    ...state.replannings.map(item => ({ time: item.replanned_at, html: replanningEntry(item) })),
+  ].sort((a, b) => new Date(b.time) - new Date(a.time));
+  document.getElementById("log").innerHTML = entries.length
+    ? entries.map(entry => entry.html).join("")
+    : `<div style="color:var(--muted)">No decisions yet — assign an order or run a scenario.</div>`;
+}
+
+async function refresh() {
+  const [state, scenarios] = await Promise.all([api("/api/state"), api("/api/scenarios")]);
+  renderTiles(state);
+  renderMap(state);
+  renderOrders(state);
+  renderRobots(state);
+  renderShelves(state);
+  renderRules(state);
+  renderScenarios(scenarios);
+  renderLog(state);
+}
+
+document.addEventListener("click", async event => {
+  const target = event.target;
+  try {
+    if (target.dataset.assign) {
+      target.disabled = true;
+      const decision = await api(`/api/orders/${target.dataset.assign}/assign`, { method: "POST" });
+      toast(`Order ${decision.order_id}: ${decision.decision.replaceAll("_", " ")}` +
+            (decision.selected_robot_id ? ` → ${decision.selected_robot_id}` : ""));
+      await refresh();
+    } else if (target.dataset.fail) {
+      target.disabled = true;
+      const result = await api(`/api/robots/${target.dataset.fail}/fail`, { method: "POST" });
+      toast(result.replanned
+        ? `Replanning: ${result.status.replaceAll("_", " ")}` +
+          (result.replacement_robot_id ? ` → ${result.replacement_robot_id}` : "")
+        : result.message);
+      await refresh();
+    } else if (target.dataset.scenario) {
+      target.disabled = true;
+      const result = await api(`/api/scenarios/${target.dataset.scenario}/run`, { method: "POST" });
+      scenarioResults[target.dataset.scenario] = result;
+      toast(`${target.dataset.scenario}: ${result.passed ? "PASSED" : "result differs"}`);
+      await refresh();
+    } else if (target.id === "btn-reset") {
+      await api("/api/reset", { method: "POST" });
+      scenarioResults = {};
+      toast("Demo state restored.");
+      await refresh();
+    } else if (target.id === "btn-reload-rules") {
+      const result = await api("/api/rules/reload", { method: "POST" });
+      toast(`Rules reloaded: ${result.loaded_rules} loaded, ${result.rejected_rules} rejected.`);
+      await refresh();
+    } else if (target.id === "btn-add-rule") {
+      const raw = JSON.parse(document.getElementById("new-rule").value);
+      const result = await api("/api/rules", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(raw),
+      });
+      toast(`Rule added — knowledge base now has ${result.loaded_rules} rules (no restart needed).`);
+      await refresh();
+    }
+  } catch (error) {
+    toast("⚠ " + error.message);
+    await refresh().catch(() => {});
+  }
+});
+
+document.getElementById("new-rule").value = JSON.stringify(EXAMPLE_RULE, null, 2);
+refresh().catch(error => toast("⚠ " + error.message));
+</script>
+</body>
+</html>
